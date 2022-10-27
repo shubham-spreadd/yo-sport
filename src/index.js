@@ -5,7 +5,7 @@ import "./index.css";
 import App from "./App";
 
 const client = new ApolloClient({
-  uri: "http://3.110.87.200:8080/graphql",
+  uri: process.env.BASE_URL, // Your graphql Backend URL inside .env file
   cache: new InMemoryCache(),
 });
 

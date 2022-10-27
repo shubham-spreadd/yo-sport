@@ -36,7 +36,7 @@ const GET_LOCATIONS = gql`
 
 const DisplayLocations = () => {
   const { loading, error, data } = useQuery(GET_LOCATIONS, {
-    variables: { search: "vad", first: 5 },
+    variables: { search: "vad", first: 5 }, // Used absolute values for demo purpose
   });
 
   if (loading) return <p>Loading...</p>;
