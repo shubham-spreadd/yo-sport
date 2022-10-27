@@ -13,6 +13,11 @@ function CityList(props) {
   );
 }
 
+/**
+ * Fragments can be collocated with component it self.
+ * Or you can create a file named eg: CityList.fragments.js in which you can pass your fragment.
+ */
+
 CityList.fragments = {
   city: gql`
     fragment CityListFragment on City {
