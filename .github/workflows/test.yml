@@ -1,0 +1,8 @@
+name: Testing github actions
+on: [push]
+jobs:
+  print-hello:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello world!"
+      - run: echo "this is step 2"
