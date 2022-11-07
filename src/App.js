@@ -1,4 +1,5 @@
 import DisplayLocations from "./DisplayLocations";
+import "./App.css";
 
 function App() {
   return (
