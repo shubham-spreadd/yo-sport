@@ -1,4 +1,5 @@
-import { useQuery, gql } from "@apollo/client";
+import { gql, useLazyQuery } from "@apollo/client";
+import { useEffect } from "react";
 import CityList from "./CityList";
 
 /**
@@ -14,6 +15,108 @@ import CityList from "./CityList";
  * @link https://www.apollographql.com/docs/react/integrations/webpack/#fragments
  */
 
+const FRAGMENT = gql`
+  fragment ScorecardFragment on ScoreCard {
+    teamId
+    tournamentId
+    matchId
+    inning
+    didNotYetBat {
+      userId
+      teamId
+      firstName
+      lastName
+      position
+    }
+    bowlingScorecard {
+      bowler {
+        userId
+        teamId
+        firstName
+        lastName
+        position
+      }
+      runs
+      overs
+      balls
+      wickets
+      maiden
+      economyRate
+      wides
+      noBalls
+      dotBalls
+    }
+    battingScorecard {
+      batsman {
+        userId
+        teamId
+        firstName
+        lastName
+        position
+      }
+      runs
+      balls
+      fours
+      sixes
+      strikeRate
+      wicket {
+        wicketType
+        fielder {
+          firstName
+          lastName
+        }
+        bowler {
+          firstName
+          lastName
+        }
+      }
+      doubles
+      triples
+      dotBalls
+    }
+    totalTeamScore {
+      runs
+      overs
+      balls
+      currentRunRate
+      wickets
+      byes
+      legByes
+      noBalls
+      wides
+      penaltyRuns
+    }
+    powerplays {
+      type
+      startOver
+      endOver
+      runs
+    }
+    fallOfWickets {
+      batsman {
+        userId
+        teamId
+        firstName
+        lastName
+      }
+      score
+      wickets
+      overs
+      balls
+    }
+  }
+`;
+
+const GET_FULL_SCORECARD_DATA = gql`
+  query fullScorecard($fullScoreCardInputType: FullScoreCardInputType) {
+    fullScorecard(fullScoreCardInputType: $fullScoreCardInputType) {
+      ...ScorecardFragment
+    }
+  }
+  ${FRAGMENT}
+`;
+
+// eslint-disable-next-line no-unused-vars
 const GET_LOCATIONS = gql`
   query GetCityList($search: String!, $first: Int!) {
     cities(search: $search, first: $first) {
@@ -35,16 +138,47 @@ const GET_LOCATIONS = gql`
 `;
 
 const DisplayLocations = () => {
-  const { loading, error, data } = useQuery(GET_LOCATIONS, {
-    variables: { search: "vad", first: 5 }, // Used absolute values for demo purpose
-  });
+  const [fetchLocation, { loading, error, data }] = useLazyQuery(
+    GET_LOCATIONS,
+    {
+      variables: { search: "vad", first: 5 }, // Used absolute values for demo purpose
+    }
+  );
+
+  const [fetchScores, { data: scoreCardData }] = useLazyQuery(
+    GET_FULL_SCORECARD_DATA,
+    {
+      variables: {
+        fullScoreCardInputType: {
+          matchId: "54bfd4f0-5eab-11ed-9bc8-093868461d21",
+          teamId: "8841a1c0-5ea9-11ed-9bc8-093868461d21",
+          tournamentId: "7cc124b0-5ea9-11ed-9bc8-093868461d21",
+          inning: 1,
+        },
+      }, // Used absolute values for demo purpose
+    }
+  );
+
+  useEffect(() => {
+    fetchScores();
+  }, [fetchScores]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error :(</p>;
 
-  return data.cities.edges.map(({ cursor, node }) => (
-    <CityList key={cursor} {...node} />
-  ));
+  return (
+    <>
+      <div>
+        <button type="button" onClick={fetchLocation}>
+          GET CITIES
+        </button>
+      </div>
+      {data?.cities?.edges.map(({ cursor, node }) => (
+        <CityList key={cursor} {...node} />
+      ))}
+      <div>{JSON.stringify(scoreCardData, null, 2)}</div>
+    </>
+  );
 };
 
 export default DisplayLocations;
