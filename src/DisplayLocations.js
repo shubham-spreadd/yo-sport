@@ -1,6 +1,7 @@
 import { gql, useLazyQuery } from "@apollo/client";
 import { useEffect } from "react";
 import CityList from "./CityList";
+import Button  from 'storybook-demo-stories';
 
 /**
  * In query declaration you need to pass fragment reference in gql literals.
@@ -33,7 +34,6 @@ const GET_FULL_SCORECARD_DATA = gql`
   ${FRAGMENT}
 `;
 
-// eslint-disable-next-line no-unused-vars
 const GET_LOCATIONS = gql`
   query GetCityList($search: String!, $first: Int!) {
     cities(search: $search, first: $first) {
@@ -86,9 +86,7 @@ const DisplayLocations = () => {
   return (
     <>
       <div>
-        <button type="button" onClick={fetchLocation}>
-          GET CITIES
-        </button>
+        <Button size="large" label="Get Locations" primary type="button" onClick={fetchLocation}/>
       </div>
       {data?.cities?.edges.map(({ cursor, node }) => (
         <CityList key={cursor} {...node} />
