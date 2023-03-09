@@ -1,7 +1,7 @@
 import { gql, useLazyQuery } from "@apollo/client";
 import { useEffect } from "react";
 import CityList from "./CityList";
-import Button  from 'storybook-demo-stories';
+import {Button}  from 'storybook-demo-stories';
 
 /**
  * In query declaration you need to pass fragment reference in gql literals.
